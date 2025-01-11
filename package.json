@@ -1,0 +1,30 @@
+{
+  "name": "typeorm-benchmarks",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "bench:all:master": "sh -c 'for run in {1..100}; do pnpm run bench && echo \"Run #$run done\"; done'",
+    "bench:all:dev": "sh -c 'for run in {1..100}; do pnpm run bench dev && echo \"Run #$run done\"; done'",
+    "bench": "ts-node main.ts -- bench",
+    "seed": "ts-node main.ts -- seed",
+    "stats": "http-server ./stats"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@faker-js/faker": "^9.3.0",
+    "http-server": "^14.1.1",
+    "pg": "^8.13.1",
+    "reflect-metadata": "^0.2.2",
+    "ts-node": "^10.9.2",
+    "typeorm": "^0.3.20",
+    "typescript": "^5.7.3"
+  },
+  "devDependencies": {
+    "@tsconfig/recommended": "^1.0.8",
+    "@types/node": "^22.10.5",
+    "@types/pg": "^8.11.10"
+  }
+}

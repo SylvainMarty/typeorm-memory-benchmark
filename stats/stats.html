@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Stats</title>
+  </head>
+  <body>
+    <div>
+      <canvas id="chart"></canvas>
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+      const urlParams = new URLSearchParams(window.location.search);
+      const statName = urlParams.get("stat");
+
+      const COLORS = {
+        master: "#36a2eb",
+        dev: "#ff6384",
+      };
+
+      async function displayStats(statName) {
+        const [masterStats, devStats] = await Promise.all([
+          fetch(`./stats-master.json`).then((response) => response.json()),
+          fetch(`./stats-dev.json`).then((response) => response.json()),
+        ]).catch((e) => {
+          console.error(e);
+          return null;
+        });
+        if (!masterStats || !devStats) {
+          return;
+        }
+        const stats = {
+          master: Object.values(masterStats),
+          dev: Object.values(devStats),
+        };
+        const datasets = [];
+        for (let statRun = 0; statRun < stats.master.length; statRun++) {
+          for (const branch of ["master", "dev"]) {
+            datasets.push({
+              label: `run ${branch}#${statRun}: ${statName}`,
+              data: stats[branch][statRun],
+              parsing: {
+                yAxisKey: statName,
+              },
+              backgroundColor: COLORS[branch],
+            });
+          }
+        }
+
+        const ctx = document.getElementById("chart");
+        new Chart(ctx, {
+          type: "line",
+          data: {
+            datasets: datasets,
+          },
+          options: {
+            scales: {
+              x: {
+                title: {
+                  display: true,
+                  text: "Iteration number (from 0 to 600)",
+                },
+              },
+              y: {
+                title: {
+                  display: true,
+                  text: `${statName} (in bytes)`,
+                },
+              },
+            },
+          },
+        });
+      }
+
+      displayStats(statName);
+    </script>
+  </body>
+</html>

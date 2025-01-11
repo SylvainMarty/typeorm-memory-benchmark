@@ -1,0 +1,17 @@
+services:
+  postgres:
+    image: postgres:17-alpine
+    ports:
+      - "5433:5432"
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: ThisIsNotAPassword
+    volumes:
+      - ./database/pr-10349-seed.sql:/docker-entrypoint-initdb.d/init.sql
+
+  http-server:
+    image: httpd:2.4-alpine
+    ports:
+      - "8080:80"
+    volumes:
+      - ./stats:/usr/local/apache2/htdocs
